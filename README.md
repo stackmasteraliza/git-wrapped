@@ -6,11 +6,11 @@ git-wrapped analyzes your repository's commit history and generates a beautiful,
 
 ## Demo
 
-![git-wrapped demo](screenshots/demo.gif)
+![git-wrapped demo](https://raw.githubusercontent.com/stackmasteraliza/git-wrapped/main/screenshots/demo.gif)
 
-![Stats, Heatmap & Activity Charts](screenshots/output-stats-heatmap.png)
+![Stats, Heatmap & Activity Charts](https://raw.githubusercontent.com/stackmasteraliza/git-wrapped/main/screenshots/output-stats-heatmap.png)
 
-![Languages, Streaks, Coder DNA & Fun Facts](screenshots/output-languages-personality.png)
+![Languages, Streaks, Coder DNA & Fun Facts](https://raw.githubusercontent.com/stackmasteraliza/git-wrapped/main/screenshots/output-languages-personality.png)
 
 ## Features
 
@@ -27,10 +27,10 @@ git-wrapped analyzes your repository's commit history and generates a beautiful,
 ## Installation
 
 ```bash
-pip install rich
+pip install git-wrapped
 ```
 
-Then clone or download this repository:
+Or install from source:
 
 ```bash
 git clone https://github.com/stackmasteraliza/git-wrapped.git
@@ -126,13 +126,13 @@ This project was built using [GitHub Copilot CLI](https://githubnext.com/project
 
 Here are some examples of Copilot CLI in action during development:
 
-![Copilot CLI explaining git log format](screenshots/copilot-git-log-format.png)
+![Copilot CLI explaining git log format](https://raw.githubusercontent.com/stackmasteraliza/git-wrapped/main/screenshots/copilot-git-log-format.png)
 
-![Copilot CLI helping calculate commit streaks](screenshots/copilot-streak-calculation.png)
+![Copilot CLI helping calculate commit streaks](https://raw.githubusercontent.com/stackmasteraliza/git-wrapped/main/screenshots/copilot-streak-calculation.png)
 
-![Copilot CLI helping count commits by hour of day](screenshots/copilot-hourly-commits.png)
+![Copilot CLI helping count commits by hour of day](https://raw.githubusercontent.com/stackmasteraliza/git-wrapped/main/screenshots/copilot-hourly-commits.png)
 
-![Copilot CLI helping render a colored heatmap with Rich](screenshots/copilot-heatmap-rendering.png)
+![Copilot CLI helping render a colored heatmap with Rich](https://raw.githubusercontent.com/stackmasteraliza/git-wrapped/main/screenshots/copilot-heatmap-rendering.png)
 
 ## License
 
