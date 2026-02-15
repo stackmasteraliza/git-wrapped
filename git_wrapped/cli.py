@@ -44,6 +44,18 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Output raw stats as JSON instead of the visual display",
     )
     parser.add_argument(
+        "--compare",
+        nargs=2,
+        type=int,
+        metavar=("YEAR1", "YEAR2"),
+        help="Compare two years side by side (e.g. --compare 2024 2025)",
+    )
+    parser.add_argument(
+        "--share",
+        action="store_true",
+        help="Generate a copy-pasteable share card for social media",
+    )
+    parser.add_argument(
         "--version", "-v",
         action="version",
         version=f"git-wrapped {__version__}",
@@ -81,8 +93,23 @@ def main() -> None:
     # Resolve repo path
     repo_path = str(Path(args.path).resolve())
 
+    from git_wrapped.analyzer import analyze
+
+    # --compare mode: side-by-side two years
+    if args.compare:
+        y1, y2 = args.compare
+        try:
+            stats1 = analyze(repo_path=repo_path, year=y1, author=args.author)
+            stats2 = analyze(repo_path=repo_path, year=y2, author=args.author)
+        except (RuntimeError, ValueError) as exc:
+            print(f"Error: {exc}", file=sys.stderr)
+            sys.exit(1)
+        from git_wrapped.display import display_compare
+        display_compare(stats1, stats2, animate=not args.no_animate)
+        return
+
+    # Normal single-year mode
     try:
-        from git_wrapped.analyzer import analyze
         stats = analyze(
             repo_path=repo_path,
             year=args.year,
@@ -94,6 +121,11 @@ def main() -> None:
 
     if args.json_output:
         print(json.dumps(_serialize_stats(stats), indent=2))
+        return
+
+    if args.share:
+        from git_wrapped.display import display_share_card
+        display_share_card(stats)
         return
 
     from git_wrapped.display import display_wrapped

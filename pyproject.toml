@@ -1,6 +1,6 @@
 [build-system]
 requires = ["setuptools>=68.0", "wheel"]
-build-backend = "setuptools.backends._legacy:_Backend"
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "git-wrapped"
@@ -29,8 +29,8 @@ dependencies = [
 git-wrapped = "git_wrapped.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/alizaali/git-wrapped"
-Repository = "https://github.com/alizaali/git-wrapped"
+Homepage = "https://github.com/stackmasteraliza/git-wrapped"
+Repository = "https://github.com/stackmasteraliza/git-wrapped"
 
 [tool.setuptools.packages.find]
 include = ["git_wrapped*"]

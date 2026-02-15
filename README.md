@@ -4,12 +4,13 @@
 
 git-wrapped analyzes your repository's commit history and generates a beautiful, colorful terminal report — complete with activity heatmaps, coding personality insights, streak tracking, and fun facts about your development habits.
 
-```
-╔══════════════════════════════════════════╗
-║         G I T   W R A P P E D            ║
-║           my-project   2025              ║
-╚══════════════════════════════════════════╝
-```
+## Demo
+
+![git-wrapped demo](screenshots/demo.gif)
+
+![Stats, Heatmap & Activity Charts](screenshots/output-stats-heatmap.png)
+
+![Languages, Streaks, Coder DNA & Fun Facts](screenshots/output-languages-personality.png)
 
 ## Features
 
@@ -32,7 +33,7 @@ pip install rich
 Then clone or download this repository:
 
 ```bash
-git clone https://github.com/yourusername/git-wrapped.git
+git clone https://github.com/stackmasteraliza/git-wrapped.git
 cd git-wrapped
 pip install -e .
 ```
@@ -122,6 +123,16 @@ This project was built using [GitHub Copilot CLI](https://githubnext.com/project
 - Writing the git log parser and statistics engine
 - Designing the Rich-based terminal visualizations
 - Debugging edge cases in date/streak calculations
+
+Here are some examples of Copilot CLI in action during development:
+
+![Copilot CLI explaining git log format](screenshots/copilot-git-log-format.png)
+
+![Copilot CLI helping calculate commit streaks](screenshots/copilot-streak-calculation.png)
+
+![Copilot CLI helping count commits by hour of day](screenshots/copilot-hourly-commits.png)
+
+![Copilot CLI helping render a colored heatmap with Rich](screenshots/copilot-heatmap-rendering.png)
 
 ## License
 

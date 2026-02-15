@@ -543,3 +543,200 @@ def display_wrapped(stats: WrappedStats, animate: bool = True) -> None:
     _section_pause(animate)
 
     _render_footer(console, stats)
+
+
+# ---------------------------------------------------------------------------
+# Compare mode — side-by-side two years
+# ---------------------------------------------------------------------------
+
+def _delta_str(old: int, new: int) -> str:
+    """Return a colored delta string like '+12%' or '-5%'."""
+    if old == 0:
+        return "[bright_green]new[/bright_green]" if new > 0 else "—"
+    pct = ((new - old) / old) * 100
+    if pct > 0:
+        return f"[bright_green]+{pct:.0f}%[/bright_green]"
+    elif pct < 0:
+        return f"[bright_red]{pct:.0f}%[/bright_red]"
+    return "[dim]0%[/dim]"
+
+
+def display_compare(stats1: WrappedStats, stats2: WrappedStats, animate: bool = True) -> None:
+    """Render a side-by-side comparison of two years."""
+    console = Console()
+
+    if animate:
+        _show_loading(console)
+
+    y1 = str(stats1.year) if stats1.year else "Period 1"
+    y2 = str(stats2.year) if stats2.year else "Period 2"
+
+    # Header
+    title = Text()
+    title.append("  G I T   W R A P P E D  ", style="bold bright_white")
+    subtitle = Text()
+    subtitle.append(f"  {stats1.repo_name}  ", style=f"italic {ACCENT2}")
+    subtitle.append(f"  {y1} vs {y2}  ", style=f"bold {ACCENT}")
+
+    console.print()
+    console.print(Panel(
+        Align.center(Text.assemble(title, "\n", subtitle)),
+        box=box.DOUBLE_EDGE,
+        style="bright_green",
+        padding=(1, 4),
+    ))
+    _section_pause(animate)
+
+    # Comparison table
+    table = Table(
+        show_header=True,
+        header_style=f"bold {ACCENT}",
+        box=box.ROUNDED,
+        padding=(0, 2),
+    )
+    table.add_column("Metric", style=DIM, width=20)
+    table.add_column(y1, justify="right", style="bright_cyan", width=14)
+    table.add_column(y2, justify="right", style="bright_magenta", width=14)
+    table.add_column("Change", justify="right", width=10)
+
+    rows = [
+        ("Commits", stats1.total_commits, stats2.total_commits),
+        ("Files Changed", stats1.total_files_changed, stats2.total_files_changed),
+        ("Lines Added", stats1.total_insertions, stats2.total_insertions),
+        ("Lines Deleted", stats1.total_deletions, stats2.total_deletions),
+        ("Active Days", stats1.active_days, stats2.active_days),
+        ("Longest Streak", stats1.longest_streak, stats2.longest_streak),
+    ]
+
+    for label, v1, v2 in rows:
+        table.add_row(label, f"{v1:,}", f"{v2:,}", _delta_str(v1, v2))
+
+    console.print(Panel(
+        table,
+        title="[bold]Year over Year[/bold]",
+        title_align="left",
+        border_style=ACCENT,
+        padding=(1, 1),
+    ))
+    _section_pause(animate)
+
+    # Personality comparison
+    lines = []
+    p1 = Text()
+    p1.append(f"  {y1}: ", style=DIM)
+    p1.append(f"{stats1.personality} {stats1.personality_emoji}", style="bold bright_cyan")
+    lines.append(p1)
+
+    p2 = Text()
+    p2.append(f"  {y2}: ", style=DIM)
+    p2.append(f"{stats2.personality} {stats2.personality_emoji}", style="bold bright_magenta")
+    lines.append(p2)
+
+    if stats1.personality != stats2.personality:
+        lines.append(Text())
+        change = Text()
+        change.append(f"  Your coding personality evolved!", style="italic bright_white")
+        lines.append(change)
+
+    console.print(Panel(
+        Text("\n").join(lines),
+        title="[bold]Personality Shift[/bold]",
+        title_align="left",
+        border_style=ACCENT3,
+        padding=(1, 1),
+    ))
+    _section_pause(animate)
+
+    # Language shift
+    all_langs = list(dict.fromkeys(
+        list(stats1.languages.keys()) + list(stats2.languages.keys())
+    ))[:6]
+
+    if all_langs:
+        lang_table = Table(
+            show_header=True,
+            header_style=f"bold {ACCENT2}",
+            box=box.SIMPLE_HEAVY,
+            padding=(0, 1),
+        )
+        lang_table.add_column("Language", style="bright_white", width=14)
+        lang_table.add_column(y1, justify="right", style="bright_cyan", width=10)
+        lang_table.add_column(y2, justify="right", style="bright_magenta", width=10)
+        lang_table.add_column("Trend", justify="right", width=10)
+
+        total1 = sum(stats1.languages.values()) or 1
+        total2 = sum(stats2.languages.values()) or 1
+
+        for lang in all_langs:
+            v1 = stats1.languages.get(lang, 0)
+            v2 = stats2.languages.get(lang, 0)
+            p1_pct = v1 / total1 * 100
+            p2_pct = v2 / total2 * 100
+            lang_table.add_row(
+                lang,
+                f"{p1_pct:.1f}%",
+                f"{p2_pct:.1f}%",
+                _delta_str(v1, v2),
+            )
+
+        console.print(Panel(
+            lang_table,
+            title="[bold]Language Shift[/bold]",
+            title_align="left",
+            border_style="bright_blue",
+            padding=(1, 1),
+        ))
+        _section_pause(animate)
+
+    # Footer
+    text = Text()
+    text.append(f"\n  {y1} vs {y2} — ", style="bold bright_white")
+    diff = stats2.total_commits - stats1.total_commits
+    if diff > 0:
+        text.append(f"You shipped {diff:,} more commits!", style="bright_green")
+    elif diff < 0:
+        text.append(f"You shipped {abs(diff):,} fewer commits (quality over quantity?).", style="bright_yellow")
+    else:
+        text.append("Same number of commits — consistency is key!", style="bright_cyan")
+    text.append("\n")
+    console.print(text)
+
+
+# ---------------------------------------------------------------------------
+# Share card — copy-pasteable plain text
+# ---------------------------------------------------------------------------
+
+def display_share_card(stats: WrappedStats) -> None:
+    """Print a copy-pasteable share card to stdout."""
+    console = Console()
+    year_str = str(stats.year) if stats.year else "All Time"
+
+    border = "+" + "-" * 46 + "+"
+
+    card_lines = [
+        border,
+        f"|{'G I T   W R A P P E D':^46}|",
+        f"|{f'{stats.repo_name} — {year_str}':^46}|",
+        border,
+        f"|                                              |",
+        f"|  Commits:       {stats.total_commits:<28}|",
+        f"|  Files Changed: {stats.total_files_changed:<28}|",
+        f"|  Lines Added:   +{stats.total_insertions:<27}|",
+        f"|  Lines Deleted:  -{stats.total_deletions:<27}|",
+        f"|  Active Days:   {stats.active_days:<28}|",
+        f"|  Longest Streak: {stats.longest_streak} days{' ' * (22 - len(str(stats.longest_streak)))}|",
+        f"|                                              |",
+        f"|  Personality: {stats.personality} {stats.personality_emoji}{' ' * max(0, 28 - len(stats.personality))}|",
+        f"|                                              |",
+        border,
+        f"|  #GitWrapped — git-wrapped on GitHub         |",
+        border,
+    ]
+
+    # Print plain text version (for copying)
+    console.print()
+    console.print("[bold bright_white]Your share card (copy & paste):[/bold bright_white]")
+    console.print()
+    for line in card_lines:
+        print(line)
+    console.print()
